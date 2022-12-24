@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "ES2020",
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": false,
+        "outDir": "build",
+        "strict": true,
+        "resolveJsonModule": true,
+        "declaration": true,
+        "lib": [
+            "es2021",
+            "DOM"
+        ],
+    },
+    "include": [
+        "src/**/*",
+    ]
+}
