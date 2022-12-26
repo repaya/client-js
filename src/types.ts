@@ -1,5 +1,5 @@
 export type CoinCode = (
-    'USD_MULTI1' |
+    'USD_MULTI_1' |
     'ETH' |
     'USDT' |
     'USDC' |
