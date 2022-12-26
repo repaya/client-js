@@ -1,4 +1,4 @@
-export type CoinCode = ('USD_MULTI1' | 'ETH' | 'USDT' | 'USDC' | 'DAI' | string);
+export type CoinCode = ('USD_MULTI_1' | 'ETH' | 'USDT' | 'USDC' | 'DAI' | string);
 export interface IntegrationCheckoutOptions {
     /**
      * customer.id is used to match the sender of a payment with a user in your own database
