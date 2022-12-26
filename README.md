@@ -1,6 +1,6 @@
 # Client
 
-repaya.io client library
+[repaya.io](https://repaya.io) client library
 
 `yarn add @repaya/client`
 
@@ -27,3 +27,4 @@ const payment = await client.payments.getBySession(session.id)
 const balances = await client.balances.getAll(formId, { customerId: '42' })
 
 ```
+
