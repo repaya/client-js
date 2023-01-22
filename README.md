@@ -1,12 +1,12 @@
 # API Client Library
 
-Typescript client library for [repaya.io](https://repaya.io) web3 payment APIs.
-
 <p>
     <a href="https://www.npmjs.com/package/@repaya/client" rel="nofollow"><img src="https://img.shields.io/npm/v/@repaya/client" alt="npm"></a>
     <img src="https://img.shields.io/bundlephobia/minzip/@repaya/client" alt="npm size">
     <img src="https://img.shields.io/npm/l/@repaya/client" alt="license">
 <p>
+
+Typescript client library for [repaya.io](https://repaya.io) web3 payment APIs.
 
 `yarn add @repaya/client`
 
