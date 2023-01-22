@@ -44,7 +44,7 @@ export class Client {
             throw new Error(`invalid environment "${env}" must be one of: "https://repaya.io", "https://goerli.repaya.io"`)
         }
 
-        if (apiToken !== null && (apiToken === '' || typeof apiToken !== 'string')) {
+        if (apiToken === '' || typeof apiToken !== 'string') {
             throw new Error('invalid api token')
         }
 
@@ -171,11 +171,11 @@ export class Payments {
         const payment: Payment = {
             ...response,
             customer: {
-                ...(response.customer || {}),
+                ...response.customer,
                 data: response.customer.data ? JSON.parse(response.customer.data) : null
             },
             product: {
-                ...(response.product || {}),
+                ...response.product,
                 data: response.product.data ? JSON.parse(response.product.data) : null
             },
         }
