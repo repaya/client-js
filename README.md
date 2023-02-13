@@ -42,3 +42,11 @@ const payment = await client.payments.getBySession(session.id)
 const balances = await client.balances.getAll(formId, { customerId: '42' })
 ```
 
+
+## Command Line Interface
+
+The package can be used via the `npx` command to access a convinient CLI:
+
+```
+Usage: REPAYA_API_TOKEN=<API_TOKEN> npx @repaya/client [command] [params...] <key=value>
+```
