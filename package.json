@@ -4,7 +4,7 @@
   "main": "build/index.js",
   "type": "module",
   "license": "MIT",
-  "bin": "build/cli/bin.js",
+  "bin": "build/cli.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/repaya/client-js.git"
