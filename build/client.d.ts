@@ -26,7 +26,7 @@ export declare class Client {
      * @param env - The environment to use. 'https://repaya.io' or 'https://goerli.repaya.io'
      * @param apiToken - The API token to use.
      */
-    constructor(env: string, apiToken: string, opts?: Options);
+    constructor(env: string, apiToken: string | null, opts?: Options);
     request<T>(path: string, method: 'get' | 'post', data?: Record<string, any>): Promise<T>;
 }
 export declare class Sessions {

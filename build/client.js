@@ -24,7 +24,7 @@ export class Client {
         if (!/^https?:\/\/\w+(.\w+)+(:\d+)?$/.test(env)) {
             throw new Error(`invalid environment "${env}" must be one of: "https://repaya.io", "https://goerli.repaya.io"`);
         }
-        if (apiToken === '' || typeof apiToken !== 'string') {
+        if (apiToken !== null && (apiToken === '' || typeof apiToken !== 'string')) {
             throw new Error('invalid api token');
         }
         this.env = env;
@@ -36,11 +36,13 @@ export class Client {
         if (method === 'get' && data) {
             url += `?${query(data)}`;
         }
+        const headers = {};
+        if (this.apiToken) {
+            headers['Authorization'] = `Bearer ${this.apiToken}`;
+        }
         const init = {
             method,
-            headers: {
-                'Authorization': `Bearer ${this.apiToken}`,
-            }
+            headers
         };
         if (method === 'post' && data) {
             init.body = JSON.stringify(data);

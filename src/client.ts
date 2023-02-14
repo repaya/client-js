@@ -19,7 +19,7 @@ export class ClientError extends Error {
 }
 
 export class Client {
-    private apiToken: string
+    private apiToken: string | null
     private options: Options
 
     readonly env: string
@@ -39,12 +39,12 @@ export class Client {
      * @param env - The environment to use. 'https://repaya.io' or 'https://goerli.repaya.io'
      * @param apiToken - The API token to use. 
      */
-    constructor(env: string, apiToken: string, opts: Options = defaultOptions) {
+    constructor(env: string, apiToken: string | null, opts: Options = defaultOptions) {
         if (!/^https?:\/\/\w+(.\w+)+(:\d+)?$/.test(env)) {
             throw new Error(`invalid environment "${env}" must be one of: "https://repaya.io", "https://goerli.repaya.io"`)
         }
 
-        if (apiToken === '' || typeof apiToken !== 'string') {
+        if (apiToken !== null && (apiToken === '' || typeof apiToken !== 'string')) {
             throw new Error('invalid api token')
         }
 
@@ -59,11 +59,14 @@ export class Client {
             url += `?${query(data)}`
         }
 
+        const headers: Record<string, string> = {}
+        if (this.apiToken) {
+            headers['Authorization'] = `Bearer ${this.apiToken}`
+        }
+
         const init: RequestInit = {
             method,
-            headers: {
-                'Authorization': `Bearer ${this.apiToken}`,
-            }
+            headers
         }
 
         if (method === 'post' && data) {

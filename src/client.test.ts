@@ -77,11 +77,6 @@ test('test client not created with invalid params', () => {
     expect(() => {
         new Client(env, '', { fetch: mock.fetch })
     }).toThrow()
-
-    expect(() => {
-        // @ts-ignore
-        new Client(env, null, { fetch: mock.fetch })
-    }).toThrow()
 })
 
 test('test client uses default options', () => {
@@ -104,6 +99,25 @@ test('test basic payment session is created', async () => {
     expect(request.method).toBe('post')
     expect(request.headers).toStrictEqual({
         'Authorization': 'Bearer API_TOKEN',
+        'Content-Type': 'application/json'
+    })
+    expect(request.body).toStrictEqual({ formLinkId: 'FORM_ID' })
+    expect(session.checkoutUrl).toBe('CHECKOUT_URL')
+})
+
+test('test basic payment session is created without apiToken', async () => {
+    const client = new Client(env, null, { fetch: mock.fetch })
+
+    mock.response(jsonResponse({ result: { checkoutUrl: 'CHECKOUT_URL' } }))
+
+    await expectToReject(async () => await client.sessions.create('', {}))
+
+    const session = await client.sessions.create('FORM_ID', {})
+    const request = mock.last()
+
+    expect(request.url?.href).toBe('https://repaya.io/api/public/1/session');
+    expect(request.method).toBe('post')
+    expect(request.headers).toStrictEqual({
         'Content-Type': 'application/json'
     })
     expect(request.body).toStrictEqual({ formLinkId: 'FORM_ID' })
