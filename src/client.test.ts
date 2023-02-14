@@ -55,7 +55,7 @@ function jsonResponse(data: any): Response {
     return response
 }
 
-async function expectToReejct(fn: () => Promise<any>) {
+async function expectToReject(fn: () => Promise<any>) {
     try {
         await fn()
     } catch (error) {
@@ -95,7 +95,7 @@ test('test basic payment session is created', async () => {
 
     mock.response(jsonResponse({ result: { checkoutUrl: 'CHECKOUT_URL' } }))
 
-    await expectToReejct(async () => await client.sessions.create('', {}))
+    await expectToReject(async () => await client.sessions.create('', {}))
 
     const session = await client.sessions.create('FORM_ID', {})
     const request = mock.last()
@@ -219,7 +219,7 @@ test('test get payment by session', async () => {
     }
 
     mock.response(jsonResponse({ result: data }))
-    await expectToReejct(() => client.payments.getBySession(''))
+    await expectToReject(() => client.payments.getBySession(''))
     const payment = await client.payments.getBySession('SESSION_ID')
     const request = mock.last()
 
@@ -255,7 +255,7 @@ test('test get payment by session without data', async () => {
     }
 
     mock.response(jsonResponse({ result: data }))
-    await expectToReejct(() => client.payments.getBySession(''))
+    await expectToReject(() => client.payments.getBySession(''))
     const payment = await client.payments.getBySession('SESSION_ID')
     const request = mock.last()
 
@@ -310,7 +310,7 @@ test('test get balance', async () => {
     mock.response(jsonResponse({
         result: data
     }))
-    await expectToReejct(() => client.balances.getAll('', {}))
+    await expectToReject(() => client.balances.getAll('', {}))
     const payment = await client.balances.getAll('FORM_ID', {
         customerId: '42',
         productId: '73',

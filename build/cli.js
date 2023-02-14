@@ -69,28 +69,34 @@ const commands = {
 };
 function printUsage() {
     console.log(`\
-Usage: REPAYA_API_TOKEN=<API_TOKEN> npx @repaya/client [command] [params...] <key=value>
+Usage: npx @repaya/client [command] [params...] <key=value>
 `);
 }
-function printCommandHelp() {
+function printHelp() {
     console.log('Commands:');
     for (const command in commands) {
-        console.log(`\t${command}   - ${commands[command].description}`);
+        console.log(`\t${command}\t - ${commands[command].description}`);
     }
+    console.log();
+    console.log('Environment variables:');
+    console.log(`\tREPAYA_API_TOKEN\t - API Token to use`);
+    console.log(`\tREPAYA_ENV\t\t - Environment to use. 'https://repaya.io' or 'https://goerli.repaya.io'`);
+    console.log(`\t\t\t\t   (default 'https://repaya.io')`);
 }
 if (!(args[0] in commands)) {
     printUsage();
     console.log();
-    printCommandHelp();
+    printHelp();
     process.exit(0);
 }
-function printCommandHeelp(command) {
+function printCommandHelp(command) {
     const desc = commands[command];
-    const usage = [`Usage: REPAYA_API_TOKEN=<API_TOKEN> npx @repaya/client`, command];
+    const usage = [`Usage: npx @repaya/client`, command];
     for (const param of desc.parameters) {
         usage.push(`[${param}]`);
     }
-    if (Object.keys(desc.options).length > 0)
+    const hasOptions = Object.keys(desc.options).length > 0;
+    if (hasOptions)
         usage.push('<OPTIONS...>');
     for (const option in desc.options) {
         const cfg = desc.options[option];
@@ -99,7 +105,8 @@ function printCommandHeelp(command) {
         usage.push(`${option}=${cfg.example}`);
     }
     console.log(usage.join(' '));
-    console.log();
+    if (!hasOptions)
+        return;
     console.log('Options: ');
     for (const option in desc.options) {
         const cfg = desc.options[option];
@@ -109,13 +116,13 @@ function printCommandHeelp(command) {
 const command = args[0];
 const desc = commands[command];
 if (argStr.includes('--help') || argStr.includes('-h')) {
-    printCommandHeelp(command);
+    printCommandHelp(command);
     process.exit(0);
 }
 const hasRequiredOptions = Object.keys(desc.options).filter(k => desc.options[k].isRequired).length > 0;
 const isRequiredArguments = desc.parameters.length > 0 || hasRequiredOptions;
 if (isRequiredArguments && args.length === 1) {
-    printCommandHeelp(command);
+    printCommandHelp(command);
     process.exit(0);
 }
 if (!process.env.REPAYA_API_TOKEN) {

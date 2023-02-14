@@ -48,5 +48,5 @@ const balances = await client.balances.getAll(formId, { customerId: '42' })
 The package can be used via the `npx` command to access a convinient CLI:
 
 ```
-Usage: REPAYA_API_TOKEN=<API_TOKEN> npx @repaya/client [command] [params...] <key=value>
+Usage: npx @repaya/client [command] [params...] <key=value>
 ```
