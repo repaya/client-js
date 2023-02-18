@@ -32,7 +32,7 @@ paths:
                       example: "user_123141"
                     data:
                       type: object
-                      describe: "Arbitrary customer data"
+                      description: "Arbitrary customer data"
                 product:
                   type: object
                   properties:
@@ -44,7 +44,7 @@ paths:
                       example: "Awesome product"
                     data:
                       type: object
-                      describe: "Arbitrary product data"
+                      description: "Arbitrary product data"
                 price:
                   type: object
                   additionalProperties: 
@@ -135,7 +135,7 @@ paths:
                       data:
                         type: object
                         nullable: true
-                        describe: "Arbitrary customer data"
+                        description: "Arbitrary customer data"
                   product:
                     type: object
                     properties:
@@ -150,7 +150,7 @@ paths:
                       data:
                         type: object
                         nullable: true
-                        describe: "Arbitrary product data"
+                        description: "Arbitrary product data"
                   sender:
                     type: string
                     example: "0x0000000000000000000000000000000000000000"
@@ -191,13 +191,13 @@ paths:
             example: "jAY7k"
         - in: query
           name: customerId
-          description: Filter by customer
+          description: Filter by customer, pass an empty string to get the total balance
           schema:
             type: string
             example: "user_123141"
         - in: query
           name: productId
-          description: Filter by product
+          description: Filter by product, pass an empty string to get the total balance
           schema:
             type: string
             example: "product_123141"
@@ -221,12 +221,12 @@ paths:
                       type: string
                       nullable: true
                       example: "user_123141"
-                      description: Customer ID for this balance record. The record represents a total balance if this field is null.
+                      description: Customer ID for this balance record. The record represents a total balance if this field is an empty string
                     productId:
                       type: string
                       nullable: true
                       example: "product_123141"
-                      description: Product ID for this balance record. The record represents a total balance if this field is null
+                      description: Product ID for this balance record. The record represents a total balance if this field is an empty string
                     balance:
                       type: string
                       example: "123.08"
