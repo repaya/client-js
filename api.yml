@@ -1,0 +1,248 @@
+openapi: 3.0.3
+info:
+  title: Repaya REST API
+  version: 1.1.5
+
+servers:
+  - url: https://repaya.io/api/public/1
+  - url: https://goerli.repaya.io/api/public/1
+  
+paths:
+  /session:
+    post:
+      summary: Create payment session
+      security:
+        - repayaAuth: []
+      description: Create a payment session to initiate the checkout flow
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ["formLinkId"]
+              properties:
+                formLinkId:
+                  type: string
+                  example: "jAY7k"
+                customer:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: "user_123141"
+                    data:
+                      type: object
+                      describe: "Arbitrary customer data"
+                product:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: "product_123141"
+                    name:
+                      type: string
+                      example: "Awesome product"
+                    data:
+                      type: object
+                      describe: "Arbitrary product data"
+                price:
+                  type: object
+                  additionalProperties: 
+                    type: string
+                  example: {"USD_MULTI_1": "15.0"} 
+                clientId:
+                  type: string
+                  example: "key_1432"
+      responses:
+        '200':
+          description: Payment session created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: ["checkoutUrl", "id", "formLinkId", "receiver"]
+                properties:
+                  checkoutUrl:
+                    type: string
+                    description: "Redirect customer to this url to complete the payment"
+                    example: "https://repaya.io/checkout/id_124124"
+                  id:
+                    type: string
+                    example: "id_124124"
+                    description: "Payment session ID"
+                  formLinkId:
+                    type: string
+                    example: "jAY7k"
+                  receiver:
+                    type: string
+                    example: "0x0000000000000000000000000000000000000000"
+                  customer:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "user_123141"
+                  product:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "product_123141"
+                      name:
+                        type: string
+                        example: "Awesome product"
+                  price:
+                    type: object
+                    additionalProperties: 
+                      type: string
+                    example: {"USD_MULTI_1": "15.0"} 
+                  clientId:
+                    type: string
+                    example: "key_1432"
+                    
+  /payment:
+    get:
+      summary: Get customer's payment in the given session
+      security:
+        - repayaAuth: []
+      parameters:
+        - in: query
+          name: sessionId
+          description: Payment session ID
+          required: true
+          schema:
+            type: string
+            example: "id_124124"
+      responses:
+        '200':
+          description: A payment associated with a given session, null if missing
+          content:
+            application/json:
+              schema:
+                type: object
+                nullable: true
+                properties:
+                  id:
+                    type: string
+                    example: "pid_3251"
+                  customer:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        nullable: true
+                        example: "user_123141"
+                      data:
+                        type: object
+                        nullable: true
+                        describe: "Arbitrary customer data"
+                  product:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        nullable: true
+                        example: "product_123141"
+                      name:
+                        type: string
+                        nullable: true
+                        example: "Awesome product"
+                      data:
+                        type: object
+                        nullable: true
+                        describe: "Arbitrary product data"
+                  sender:
+                    type: string
+                    example: "0x0000000000000000000000000000000000000000"
+                  receiver:
+                    type: string
+                    example: "0x0000000000000000000000000000000000000000"
+                  amount:
+                    type: string
+                    example: "15.0"
+                  paidAmount:
+                    type: string
+                    example: "5.0"
+                  status:
+                    type: string
+                    enum: ["completed", "pending", "failed", "canceled"]
+                    example: "pending"
+                  coin:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "USD_MULTI_1"
+                      name:
+                        type: string
+                        example: "USD Stablecoins"
+  /balance:
+    get:
+      summary: Get customer balances
+      security:
+        - repayaAuth: []
+      parameters:
+        - in: query
+          name: formLinkId
+          description: Payment form ID
+          required: true
+          schema:
+            type: string
+            example: "jAY7k"
+        - in: query
+          name: customerId
+          description: Filter by customer
+          schema:
+            type: string
+            example: "user_123141"
+        - in: query
+          name: productId
+          description: Filter by product
+          schema:
+            type: string
+            example: "product_123141"
+        - in: query
+          name: coin
+          description: Filter by coin
+          schema:
+            type: string
+            example: "USD_MULTI_1"
+      responses:
+        '200':
+          description: List of customer balances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    customerId:
+                      type: string
+                      nullable: true
+                      example: "user_123141"
+                      description: Customer ID for this balance record. The record represents a total balance if this field is null.
+                    productId:
+                      type: string
+                      nullable: true
+                      example: "product_123141"
+                      description: Product ID for this balance record. The record represents a total balance if this field is null
+                    balance:
+                      type: string
+                      example: "123.08"
+                      description: Balance value
+                    coin:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: "USD_MULTI_1"
+                        name:
+                          type: string
+                          example: "USD Stablecoins"
+
+components:
+  securitySchemes:
+    repayaAuth:
+      type: http
+      scheme: bearer
