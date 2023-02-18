@@ -23,6 +23,11 @@ const commands = {
                 description: 'Product ID',
                 example: '12345678'
             },
+            'product.name': {
+                isRequired: false,
+                description: 'Product Name',
+                example: 'Awesome product'
+            },
             'product.data': {
                 isRequired: false,
                 description: 'Arbitrary product data',

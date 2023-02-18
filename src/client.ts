@@ -1,11 +1,16 @@
-import { CheckoutOptions, Payment, RequestBalanceOptions, BalanceResponse } from './types.js'
+import { CheckoutOptions, Payment, RequestBalanceOptions, BalanceResponse, PaymentSession } from './types.js'
 import { query } from './util.js'
 
 interface Options {
     fetch: (url: string, init: RequestInit) => Promise<Response>
 }
 
-export const defaultOptions = { fetch }
+export const defaultOptions = {
+    fetch: (...args: Parameters<typeof fetch>) => {
+        if (typeof window !== 'undefined') return window.fetch(...args)
+        return fetch(...args)
+    }
+}
 
 export class ClientError extends Error {
     readonly code: number
@@ -134,7 +139,7 @@ export class Sessions {
             data.price = options.price
         }
 
-        const session = await this.client.request<{ checkoutUrl: string }>('/api/public/1/session', 'post', data)
+        const session = await this.client.request<PaymentSession>('/api/public/1/session', 'post', data)
         return session
     }
 }

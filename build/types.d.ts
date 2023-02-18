@@ -31,6 +31,10 @@ export interface CommonCheckoutOptions {
     clientId?: string;
 }
 export type CheckoutOptions = CommonCheckoutOptions & (IntegrationCheckoutOptions | RequestCheckoutOptions);
+export interface PaymentSession {
+    id: string;
+    checkoutUrl: string;
+}
 export interface Payment {
     id: string;
     customer: {

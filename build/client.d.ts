@@ -1,9 +1,9 @@
-import { CheckoutOptions, Payment, RequestBalanceOptions, BalanceResponse } from './types.js';
+import { CheckoutOptions, Payment, RequestBalanceOptions, BalanceResponse, PaymentSession } from './types.js';
 interface Options {
     fetch: (url: string, init: RequestInit) => Promise<Response>;
 }
 export declare const defaultOptions: {
-    fetch: typeof fetch;
+    fetch: (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>;
 };
 export declare class ClientError extends Error {
     readonly code: number;
@@ -39,9 +39,7 @@ export declare class Sessions {
      * @param options - Checkout options
      * @returns Session with checkout url. Redirect customer to this url to start the checkout
      */
-    create(formId: string, options: CheckoutOptions): Promise<{
-        checkoutUrl: string;
-    }>;
+    create(formId: string, options: CheckoutOptions): Promise<PaymentSession>;
 }
 export declare class Payments {
     private client;

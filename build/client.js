@@ -1,5 +1,11 @@
 import { query } from './util.js';
-export const defaultOptions = { fetch };
+export const defaultOptions = {
+    fetch: (...args) => {
+        if (typeof window !== 'undefined')
+            return window.fetch(...args);
+        return fetch(...args);
+    }
+};
 export class ClientError extends Error {
     constructor(code, message, data) {
         super(message);

@@ -349,3 +349,78 @@ test('test get balance', async () => {
     })
     expect(payment).toStrictEqual(data)
 })
+
+
+test('test get balance empty filter', async () => {
+    const client = new Client(env, token, { fetch: mock.fetch })
+
+    const data = [{
+        customerId: '',
+        productId: '',
+        balance: '0.0',
+        coin: {
+            name: 'Coin Name',
+            code: 'COIN_CODE'
+        }
+    }]
+    mock.response(jsonResponse({ result: data }))
+
+    const balance = await client.balances.getAll('FORM_ID', {
+        customerId: '',
+        productId: '',
+        coin: 'COIN_CODE'
+    })
+    const request = mock.last()
+
+    expect(request.method).toBe('get')
+    const params = Array.from(request.url!.searchParams).reduce((acc, [k, v]) => {
+        acc[k] = v
+        return acc
+    }, {} as Record<string, string>)
+
+    expect(params).toStrictEqual({
+        formLinkId: 'FORM_ID',
+        customerId: '',
+        productId: '',
+        coin: 'COIN_CODE'
+    })
+    expect(request.headers).toStrictEqual({
+        'Authorization': 'Bearer API_TOKEN',
+    })
+    expect(balance).toStrictEqual(data)
+})
+
+test('test get balance no filter', async () => {
+    const client = new Client(env, token, { fetch: mock.fetch })
+
+    const data = [{
+        customerId: '',
+        productId: '',
+        balance: '0.0',
+        coin: {
+            name: 'Coin Name',
+            code: 'COIN_CODE'
+        }
+    }]
+    mock.response(jsonResponse({ result: data }))
+
+    const balance = await client.balances.getAll('FORM_ID', {
+        coin: 'COIN_CODE'
+    })
+    const request = mock.last()
+
+    expect(request.method).toBe('get')
+    const params = Array.from(request.url!.searchParams).reduce((acc, [k, v]) => {
+        acc[k] = v
+        return acc
+    }, {} as Record<string, string>)
+
+    expect(params).toStrictEqual({
+        formLinkId: 'FORM_ID',
+        coin: 'COIN_CODE'
+    })
+    expect(request.headers).toStrictEqual({
+        'Authorization': 'Bearer API_TOKEN',
+    })
+    expect(balance).toStrictEqual(data)
+})
