@@ -3,6 +3,7 @@ import { Client } from "./client.js";
 import { inspect } from 'util';
 const args = process.argv.slice(2);
 const argStr = args.join(" ");
+const priceOptionKey = 'price.<COIN>';
 const commands = {
     'sessions.create': {
         description: 'Create payment session',
@@ -33,7 +34,7 @@ const commands = {
                 description: 'Arbitrary product data',
                 example: '"data"'
             },
-            'price.<COIN>': {
+            [priceOptionKey]: {
                 isRequired: false,
                 description: 'Product prices',
                 example: '15.0'
@@ -49,6 +50,37 @@ const commands = {
         description: 'Get payment by session ID',
         parameters: ['sessionId'],
         options: {}
+    },
+    'payments.list': {
+        description: 'List payments by payment form ID',
+        parameters: ['formId'],
+        options: {
+            'from': {
+                isRequired: false,
+                description: 'Start from date (default timestamp 0)',
+                example: '2021-02-03T04:05:06'
+            },
+            'till': {
+                isRequired: false,
+                description: 'End on date (default 1 hour from now)',
+                example: '2021-02-03T04:05:06'
+            },
+            'sort': {
+                isRequired: false,
+                description: 'Sort direction "asc" or "desc" (default "asc")',
+                example: 'desc'
+            },
+            'limit': {
+                isRequired: false,
+                description: 'Limit results (default 1000)',
+                example: '100',
+            },
+            'page': {
+                isRequired: false,
+                description: 'Page number starting from 1 (default 1)',
+                example: '4',
+            },
+        }
     },
     'balances.getAll': {
         description: 'Get user balances by form ID',
@@ -165,6 +197,8 @@ for (const option in desc.options) {
     }
 }
 for (const option in options) {
+    if (option.startsWith('price.') && priceOptionKey in desc.options)
+        continue;
     if (!(option in desc.options)) {
         console.log(`Unknown option "${option}"`);
         process.exit(1);

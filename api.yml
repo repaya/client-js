@@ -176,6 +176,120 @@ paths:
                       name:
                         type: string
                         example: "USD Stablecoins"
+  /payment/list:
+    get:
+      summary: List payments
+      security:
+        - repayaAuth: []
+      parameters:
+        - in: query
+          name: formId
+          description: Payment form ID
+          required: true
+          schema:
+            type: string
+            example: "jAY7k"
+        - in: query
+          name: limit
+          description: Limit the number of results
+          required: true
+          schema:
+            type: number
+            example: 100
+        - in: query
+          name: page
+          description: Page number
+          required: true
+          schema:
+            type: number
+            example: 3
+        - in: query
+          name: sort
+          description: Sort direction (by "created")
+          required: true
+          schema:
+            type: string
+            enum: ['asc', 'desc']
+            example: "asc"
+        - in: query
+          name: fromTimestamp
+          description: From timestamp in milliseconds
+          required: true
+          schema:
+            type: number
+            example: 1669839216188
+        - in: query
+          name: tillTimestamp
+          description: Till timestamp in milliseconds
+          required: true
+          schema:
+            type: number
+            example: 1669839216188
+      responses:
+        '200':
+          description: List of payments filtered by the given parameters.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  nullable: true
+                  properties:
+                    id:
+                      type: string
+                      example: "pid_3251"
+                    customer:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          nullable: true
+                          example: "user_123141"
+                        data:
+                          type: object
+                          nullable: true
+                          description: "Arbitrary customer data"
+                    product:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          nullable: true
+                          example: "product_123141"
+                        name:
+                          type: string
+                          nullable: true
+                          example: "Awesome product"
+                        data:
+                          type: object
+                          nullable: true
+                          description: "Arbitrary product data"
+                    sender:
+                      type: string
+                      example: "0x0000000000000000000000000000000000000000"
+                    receiver:
+                      type: string
+                      example: "0x0000000000000000000000000000000000000000"
+                    amount:
+                      type: string
+                      example: "15.0"
+                    paidAmount:
+                      type: string
+                      example: "5.0"
+                    status:
+                      type: string
+                      enum: ["completed", "pending", "failed", "canceled"]
+                      example: "pending"
+                    coin:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: "USD_MULTI_1"
+                        name:
+                          type: string
+                          example: "USD Stablecoins"
   /balance:
     get:
       summary: Get customer balances

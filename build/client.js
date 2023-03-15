@@ -1,4 +1,4 @@
-import { query } from './util.js';
+import { expandResponsePayment, query } from './util.js';
 export const defaultOptions = {
     fetch: (...args) => {
         if (typeof window !== 'undefined')
@@ -124,18 +124,37 @@ export class Payments {
         if (response == null) {
             return null;
         }
-        const payment = {
-            ...response,
-            customer: {
-                ...response.customer,
-                data: response.customer.data ? JSON.parse(response.customer.data) : null
-            },
-            product: {
-                ...response.product,
-                data: response.product.data ? JSON.parse(response.product.data) : null
-            },
+        return expandResponsePayment(response);
+    }
+    /**
+     * List all payments by payment form
+     *
+     * @param formId payment form ID
+     * @param opts filters
+     * @returns Paginated list of payments
+     */
+    async list(formId, opts) {
+        if (!formId) {
+            throw new Error("formId cannot be empty");
+        }
+        let from = opts.from && typeof opts.from === 'string' ? new Date(opts.from) : opts.from;
+        let till = opts.till && typeof opts.till === 'string' ? new Date(opts.till) : opts.till;
+        const data = {
+            formId,
+            limit: opts.limit ?? 1000,
+            page: opts.page ?? 1,
+            sort: opts.sort ?? 'desc',
+            fromTimestamp: from ? +from : 0,
+            tillTimestamp: till ? +till : (Date.now() + 3600 * 1e3),
         };
-        return payment;
+        const response = await this.client.request('/api/public/1/payment/list', 'get', data);
+        if (response === null) {
+            return null;
+        }
+        return {
+            ...response,
+            items: response.items.map(expandResponsePayment)
+        };
     }
 }
 export class Balances {

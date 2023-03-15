@@ -88,3 +88,23 @@ export interface BalanceResponse {
         code: string
     }
 }
+
+export interface PaymentListOptions {
+    from?: number | string | Date | null
+    till?: number | string | Date | null
+    limit?: number
+    page?: number
+    sort?: 'asc' | 'desc'
+}
+
+export type PaymentResponse = Payment & {
+    customer: Payment['customer'] & { data: string }
+    product: Payment['product'] & { data: string }
+}
+
+export type PaymentListResponse = {
+    total: number,
+    totalPages: number,
+    page: number,
+    items: PaymentResponse[]
+}

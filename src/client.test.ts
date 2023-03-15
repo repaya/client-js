@@ -1,4 +1,6 @@
 import { Client, ClientError, defaultOptions } from "./client.js"
+import { PaymentResponse } from "./types.js"
+import { expandResponsePayment } from "./util.js"
 
 interface LastRequest {
     url: URL | null
@@ -423,4 +425,103 @@ test('test get balance no filter', async () => {
         'Authorization': 'Bearer API_TOKEN',
     })
     expect(balance).toStrictEqual(data)
+})
+
+
+const paymentResponseData = {
+    total: 1,
+    totalPages: 1,
+    page: 1,
+    items: [{
+        id: 'id_1234',
+        customer: {
+            id: 'customer_1231',
+            data: '{}'
+        },
+        product: {
+            name: 'product_name',
+            id: 'product_1234',
+            data: '{}'
+        },
+        sender: '0x001',
+        receiver: '0x002',
+        amount: '10.0',
+        paidAmount: '10.0',
+        status: 'completed',
+        coin: {
+            code: 'USD_MULTI_1',
+            name: 'USD Stablecoins'
+        },
+        created: Date.now()
+    }] as PaymentResponse[]
+}
+
+const paymentResponseDataCheck = {
+    ...paymentResponseData,
+    items: paymentResponseData.items.map(expandResponsePayment)
+}
+
+test('test get payments no filter', async () => {
+    const client = new Client(env, token, { fetch: mock.fetch })
+
+    mock.response(jsonResponse({ result: paymentResponseData }))
+
+    const payments = await client.payments.list('FORM_ID', {})
+    const request = mock.last()
+
+    expect(request.method).toBe('get')
+    const params = Array.from(request.url!.searchParams).reduce((acc, [k, v]) => {
+        acc[k] = v
+        return acc
+    }, {} as Record<string, string>)
+
+    const till = (Date.now() + 3600 * 1e3)
+    expect(params).toStrictEqual({
+        formId: 'FORM_ID',
+        limit: '1000',
+        page: '1',
+        sort: 'desc',
+        fromTimestamp: '0',
+        tillTimestamp: `${+till}`
+    })
+    expect(request.headers).toStrictEqual({
+        'Authorization': 'Bearer API_TOKEN',
+    })
+    expect(payments).toStrictEqual(paymentResponseDataCheck)
+})
+
+test('test get payments filters', async () => {
+    const client = new Client(env, token, { fetch: mock.fetch })
+
+    mock.response(jsonResponse({ result: paymentResponseData }))
+
+    const from = new Date(Date.now() - 4 * 3600e3)
+    const till = new Date(Date.now() + 4 * 3600e3)
+    const payments = await client.payments.list('FORM_ID', {
+        limit: 2,
+        page: 3,
+        sort: 'asc',
+        from,
+        till
+    })
+    const request = mock.last()
+
+    expect(request.method).toBe('get')
+    const params = Array.from(request.url!.searchParams).reduce((acc, [k, v]) => {
+        acc[k] = v
+        return acc
+    }, {} as Record<string, string>)
+
+    expect(params).toStrictEqual({
+        formId: 'FORM_ID',
+        limit: '2',
+        page: '3',
+        sort: 'asc',
+        fromTimestamp: `${+from}`,
+        tillTimestamp: `${+till}`
+    })
+    expect(request.headers).toStrictEqual({
+        'Authorization': 'Bearer API_TOKEN',
+    })
+    expect(payments).toStrictEqual(paymentResponseDataCheck)
 })

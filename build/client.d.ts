@@ -1,4 +1,4 @@
-import { CheckoutOptions, Payment, RequestBalanceOptions, BalanceResponse, PaymentSession } from './types.js';
+import { CheckoutOptions, Payment, RequestBalanceOptions, BalanceResponse, PaymentSession, PaymentListOptions } from './types.js';
 interface Options {
     fetch: (url: string, init: RequestInit) => Promise<Response>;
 }
@@ -51,6 +51,19 @@ export declare class Payments {
      * @returns Payment associated with this session if any
      */
     getBySession(sessionId: string): Promise<Payment | null>;
+    /**
+     * List all payments by payment form
+     *
+     * @param formId payment form ID
+     * @param opts filters
+     * @returns Paginated list of payments
+     */
+    list(formId: string, opts: PaymentListOptions): Promise<{
+        items: Payment[];
+        total: number;
+        totalPages: number;
+        page: number;
+    } | null>;
 }
 export declare class Balances {
     private client;

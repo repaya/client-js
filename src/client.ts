@@ -1,5 +1,14 @@
-import { CheckoutOptions, Payment, RequestBalanceOptions, BalanceResponse, PaymentSession } from './types.js'
-import { query } from './util.js'
+import {
+    CheckoutOptions,
+    Payment,
+    RequestBalanceOptions,
+    BalanceResponse,
+    PaymentSession,
+    PaymentListOptions,
+    PaymentListResponse,
+    PaymentResponse
+} from './types.js'
+import { expandResponsePayment, query } from './util.js'
 
 interface Options {
     fetch: (url: string, init: RequestInit) => Promise<Response>
@@ -144,11 +153,6 @@ export class Sessions {
     }
 }
 
-type PaymentResponse = Payment & {
-    customer: Payment['customer'] & { data: string }
-    product: Payment['product'] & { data: string }
-}
-
 export class Payments {
     private client: Client
 
@@ -176,18 +180,42 @@ export class Payments {
             return null
         }
 
-        const payment: Payment = {
-            ...response,
-            customer: {
-                ...response.customer,
-                data: response.customer.data ? JSON.parse(response.customer.data) : null
-            },
-            product: {
-                ...response.product,
-                data: response.product.data ? JSON.parse(response.product.data) : null
-            },
+        return expandResponsePayment(response)
+    }
+
+    /**
+     * List all payments by payment form
+     * 
+     * @param formId payment form ID
+     * @param opts filters
+     * @returns Paginated list of payments
+     */
+    async list(formId: string, opts: PaymentListOptions) {
+        if (!formId) {
+            throw new Error("formId cannot be empty")
         }
-        return payment
+
+        let from = opts.from && typeof opts.from === 'string' ? new Date(opts.from) : opts.from
+        let till = opts.till && typeof opts.till === 'string' ? new Date(opts.till) : opts.till
+
+        const data: Record<string, any> = {
+            formId,
+            limit: opts.limit ?? 1000,
+            page: opts.page ?? 1,
+            sort: opts.sort ?? 'desc',
+            fromTimestamp: from ? +from : 0,
+            tillTimestamp: till ? +till : (Date.now() + 3600 * 1e3),
+        }
+
+        const response = await this.client.request<PaymentListResponse | null>('/api/public/1/payment/list', 'get', data)
+        if (response === null) {
+            return null
+        }
+
+        return {
+            ...response,
+            items: response.items.map(expandResponsePayment)
+        }
     }
 }
 
