@@ -31,7 +31,7 @@ paths:
                       type: string
                       example: "user_123141"
                     data:
-                      type: object
+                      type: string
                       description: "Arbitrary customer data"
                 product:
                   type: object
@@ -43,7 +43,7 @@ paths:
                       type: string
                       example: "Awesome product"
                     data:
-                      type: object
+                      type: string
                       description: "Arbitrary product data"
                 price:
                   type: object
@@ -133,7 +133,7 @@ paths:
                         nullable: true
                         example: "user_123141"
                       data:
-                        type: object
+                        type: string
                         nullable: true
                         description: "Arbitrary customer data"
                   product:
@@ -148,7 +148,7 @@ paths:
                         nullable: true
                         example: "Awesome product"
                       data:
-                        type: object
+                        type: string
                         nullable: true
                         description: "Arbitrary product data"
                   sender:
@@ -247,7 +247,7 @@ paths:
                           nullable: true
                           example: "user_123141"
                         data:
-                          type: object
+                          type: string
                           nullable: true
                           description: "Arbitrary customer data"
                     product:
@@ -262,7 +262,7 @@ paths:
                           nullable: true
                           example: "Awesome product"
                         data:
-                          type: object
+                          type: string
                           nullable: true
                           description: "Arbitrary product data"
                     sender:
